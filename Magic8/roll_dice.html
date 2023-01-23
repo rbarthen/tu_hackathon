@@ -1,0 +1,161 @@
+<script language="JavaScript">
+    var rolls = 0;
+    var diceRolling = 0;
+    var total_dice = 0;
+    
+    
+    function resetDice(){
+        rolls=0;
+        for(var i=1; i<6; i++){
+            item("Die"+i).value=0;//.innerHTML = "&nbsp;";
+            item("Die"+i).className = "";
+            document.kismet.Die[i-1].checked=false;
+        }	
+        checkOptions();
+    }
+
+    
+    function item(id){
+        return document.getElementById(id);
+    }
+    
+    function getRandomDie(){
+        var randNo = Math.floor(Math.random()*6)+1;
+        if(randNo==7) randNo = 6;
+        return randNo;
+    }
+    
+    function setDie(diePos,val){
+        var dieFld = item("Die" + diePos);	
+        dieFld.value = val; //innerHTML = val;
+        var dieColor = "black";
+        if(val == 2 || val == 5){
+            dieColor = "red";
+        }
+        if(val == 3 || val == 4){
+            dieColor = "blue";
+        }
+        dieFld.style.color=dieColor;
+        dieFld.style.borderColor=dieColor;
+        dieFld.className = "Die" + val;
+    }
+    
+    function rollDie(die, count){
+        var randNo = getRandomDie();
+        setDie(die,randNo);
+        if(count < Math.random()*25){
+            window.setTimeout("rollDie(" + die + "," + eval(count+1) + ")" , 75);
+        }else diceRolling--;
+    }
+
+    function do_total(){
+        if(diceRolling > 0){
+            window.setTimeout("do_total()", 20);
+            return;
+        }
+        for(var i=0; i<5; i++){
+            var dieFld = item("Die" + (i+1));
+            // alert(dieFld.className.replace(/[^0-9]/g,""))
+            total_dice +=  parseInt(dieFld.className.replace(/[^0-9]/g,""))
+        }
+        item("ttl").value = total_dice;
+    }
+    
+    function doRoll(){
+        total_dice=0;
+        for(var i=0; i<5; i++){
+            diceRolling++;
+            rollDie(i+1, 0);
+        }
+	
+        do_total();
+    }
+    
+    
+    </script>
+    
+    <style>
+        .openItem{
+            text-align:right;
+            color:gray;
+            cursor:pointer;
+        }
+        .used{
+            text-align:right;
+            color:blue;
+        }
+        .dice td{
+            /*width:24px;
+            height:30px;*/
+            width:48px;
+            height:60px;
+            background-repeat:none;
+    
+            text-align:center;
+            border: none !important;
+            cursor:pointer;
+            /*font-size:0px;*/
+        }
+        td{
+            font-weight: bold;
+            font-size:90%;
+            padding-left:6px;
+            padding-right:6px;
+        }
+        
+        .die1{
+            font-size:0px;
+            background-image:url('kismetDice/Die_1.png');
+        }
+        .die2{
+            font-size:0px;
+            background-image:url('kismetDice/Die_2.png');
+        }
+        .die3{
+            font-size:0px;
+            background-image:url('kismetDice/Die_3.png');
+        }
+        .die4{
+            font-size:0px;
+            background-image:url('kismetDice/Die_4.png');
+        }
+        .die5{
+            font-size:0px;
+            background-image:url('kismetDice/Die_5.png');
+        }
+        .die6{
+            font-size:0px;
+            background-image:url('kismetDice/Die_6.png');
+        }
+    </style>
+    
+    <form action="" name="kismet" id="kismet">
+
+        <div>Choose how many dice you want or a maximum number to return starting from 1</div>
+        <div>How Many Dice: <input type="text" id="dice_count"/></div>
+        <div>or</div>
+        <div>Maxiumum Number: <input type="text" id="max_number"/></div>
+    
+    <table>	
+        <tr>		
+            <td align="center">					
+                <table class="Dice">				
+                    <tr>					
+                        <td id="Die1" style="border:black 1px solid;" >&nbsp;</td>					
+                        <td id="Die2" style="border:red 1px solid;"   >&nbsp;</td>					
+                        <td id="Die3" style="border:blue 1px solid;"  >&nbsp;</td>					
+                        <td id="Die4" style="border:black 1px solid;" >&nbsp;</td>					
+                        <td id="Die5" style="border:red 1px solid;"   >&nbsp;</td>					
+                        <td></td>				
+                    </tr>				
+                    <tr>					
+                        <tdTotal:</td>					
+                        <td colspan="4"><input type="text" id="ttl"/></td>					
+                        
+                        <td><input type="button" value="Roll" onclick="doRoll()" name="rollButton"></td>				
+                    </tr>			
+                </table>					</td>	</tr>
+
+    </table>
+    </form>
+    
