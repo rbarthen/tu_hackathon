@@ -1,7 +1,12 @@
+<html>
+ <head>
+  <title>Dice Roll</title>
+
 <script language="JavaScript">
     var rolls = 0;
     var diceRolling = 0;
     var total_dice = 0;
+    var die_count = 1;
     
     
     function resetDice(){
@@ -43,8 +48,8 @@
     function rollDie(die, count){
         var randNo = getRandomDie();
         setDie(die,randNo);
-        if(count < Math.random()*25){
-            window.setTimeout("rollDie(" + die + "," + eval(count+1) + ")" , 75);
+        if(count < Math.random()*50){
+            window.setTimeout("rollDie(" + die + "," + eval(count+1) + ")" , 85);
         }else diceRolling--;
     }
 
@@ -53,22 +58,52 @@
             window.setTimeout("do_total()", 20);
             return;
         }
-        for(var i=0; i<5; i++){
+        for(var i=0; i<die_count; i++){
             var dieFld = item("Die" + (i+1));
             // alert(dieFld.className.replace(/[^0-9]/g,""))
             total_dice +=  parseInt(dieFld.className.replace(/[^0-9]/g,""))
         }
-        item("ttl").value = total_dice;
+        item("ttl").innerText = total_dice;
     }
     
     function doRoll(){
+        set_dice();
         total_dice=0;
-        for(var i=0; i<5; i++){
+        for(var i=0; i<die_count; i++){
             diceRolling++;
             rollDie(i+1, 0);
         }
 	
         do_total();
+    }
+
+    function set_dice(){
+        if(die_count>0){
+            item("Dice").innerHTML="";
+            for(var i=0; i<die_count; i++){
+                item("Dice").innerHTML = item("Dice").innerHTML + "<div  id='Die" + (i+1) + "''>&nbsp;</div>";
+                setDie(i+1,(i % 6)+1);
+            }
+        }
+    }
+
+    function setDiceByCount(src){
+        item("max_number").value = "";
+        var user_val = src.value.replace(/[^0-9]/g,"");
+        if(user_val.length > 0 && parseInt(user_val) > 0){
+            die_count = parseInt(user_val);
+            set_dice();
+        }
+    }
+
+    function setDiceByNumber(src){
+        item("dice_count").value = "";
+        var user_val = src.value.replace(/[^0-9]/g,"");
+        if(user_val.length > 0 && parseInt(user_val) > 0){
+            max_count = parseInt(user_val);
+            die_count = Math.ceil(parseInt(user_val)/6);
+            set_dice();
+        }
     }
     
     
@@ -84,24 +119,25 @@
             text-align:right;
             color:blue;
         }
-        .dice td{
+        .Dice div{
             /*width:24px;
             height:30px;*/
-            width:48px;
+            width:60px;
             height:60px;
             background-repeat:none;
-    
+            display:inline-block;
             text-align:center;
             border: none !important;
             cursor:pointer;
             /*font-size:0px;*/
         }
-        td{
+
+        /* td{
             font-weight: bold;
             font-size:90%;
             padding-left:6px;
             padding-right:6px;
-        }
+        } */
         
         .die1{
             font-size:0px;
@@ -127,35 +163,38 @@
             font-size:0px;
             background-image:url('kismetDice/Die_6.png');
         }
+
+        #Dice{
+            padding-top:20px;
+            padding-bottom:20px;
+        }
     </style>
+
+<body onload="set_dice()">
     
     <form action="" name="kismet" id="kismet">
 
-        <div>Choose how many dice you want or a maximum number to return starting from 1</div>
-        <div>How Many Dice: <input type="text" id="dice_count"/></div>
-        <div>or</div>
-        <div>Maxiumum Number: <input type="text" id="max_number"/></div>
-    
-    <table>	
-        <tr>		
-            <td align="center">					
-                <table class="Dice">				
-                    <tr>					
-                        <td id="Die1" style="border:black 1px solid;" >&nbsp;</td>					
-                        <td id="Die2" style="border:red 1px solid;"   >&nbsp;</td>					
-                        <td id="Die3" style="border:blue 1px solid;"  >&nbsp;</td>					
-                        <td id="Die4" style="border:black 1px solid;" >&nbsp;</td>					
-                        <td id="Die5" style="border:red 1px solid;"   >&nbsp;</td>					
-                        <td></td>				
-                    </tr>				
-                    <tr>					
-                        <tdTotal:</td>					
-                        <td colspan="4"><input type="text" id="ttl"/></td>					
-                        
-                        <td><input type="button" value="Roll" onclick="doRoll()" name="rollButton"></td>				
-                    </tr>			
-                </table>					</td>	</tr>
+        <div>Choose how many dice you want or a maximum number to return that is divisible by 6: <br/>&nbsp;</div>
 
-    </table>
-    </form>
+        <div> <input type="text" id="dice_count" onchange="setDiceByCount(this)" value="" size="5"/> &ndash; How Many Dice</div>
+        <div>or</div>
+        <div> <input type="text" id="max_number" onchange="setDiceByNumber(this)" size="5"/>  &ndash; Maxiumum Number</div>
+
     
+        <div id="Dice" class="Dice">
+            <div  id="Die1" >&nbsp;</div>
+            <div  id="Die2" >&nbsp;</div>
+            <div  id="Die3" >&nbsp;</div>
+            <div  id="Die4" >&nbsp;</div>
+            <div  id="Die5" >&nbsp;</div>
+        </div>
+
+        <div>Total: <span id="ttl">0</span></div><br/>&nbsp;
+				
+        
+        <div><input type="button" value="Roll" onclick="doRoll()" name="rollButton"></div>		
+
+    
+    </form>
+</body>
+</html>
