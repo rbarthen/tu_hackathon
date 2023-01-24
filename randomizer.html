@@ -3,17 +3,21 @@
   <title>Randomizer</title>
 
   <script>
-    var list = [
+    let custom_list = [
       "Raj",
       "James",
       "Tom",
       "Suyash",
       "Bob",
       "Christina"
+    ]
+
+    let question_list = [
+      ""
     ];
 
-    var icebreakers = {
-      "Virtual Icebreaker": [
+    let icebreakers = {
+      "Virtual (work from home)": [
 "Do you love working from home or would you rather be in the office? Is there a balance of both that you like best?",
 "What’s the hardest part about working virtually for you? The easiest?",
 "Do you have a dedicated office space at home?",
@@ -192,38 +196,44 @@
         return document.getElementById(id);
     }
 
-    function clean_list(){
-      for(var i=list.length-1;i>=0;i--){
-        if(list[i].replace(/\s/g,"") =="" ){
-          list.splice(i, 1); // 2nd parameter means remove one item only
+    function clean_list(src_list,target_div_id){
+      for(let i=src_list.length-1;i>=0;i--){
+        if(src_list[i].replace(/\s/g,"") =="" ){
+          src_list.splice(i, 1); // 2nd parameter means remove one item only
         }
       }
     }
 
-    function load_list_from_input(){
+    function load_list_from_input(src_list, target_div_id){
       if( item("input").value.length > 1 && item("input").value.match(/\n/)){
-          list = item("input").value.split("\n");
+        src_list = item("input").value.split("\n");
       }
-      clean_list();
-      load_list();
+      clean_list(src_list,target_div_id);
+      load_list(src_list,target_div_id);
+
+      item("custom_container").className = "";
+      item("load_custom").className = "hidden";
+
     }
 
-    function load_list(){
-      item("loaded_list").innerHTML = "";
-      for(i=0;i<list.length;i++){
-        item("loaded_list").innerHTML += "<div id='li_" + i + "'>" + list[i] + "</div>";
+    function custom_edit_list(){
+      item("custom_container").className = "hidden";
+      item("load_custom").className = "";
+    }
+
+    function load_list(src_list, target_div_id){
+      item(target_div_id).innerHTML = "";
+      for(i=0;i<src_list.length;i++){
+        item(target_div_id).innerHTML += "<div id='li_"  + target_div_id + "_" + i + "'>" + src_list[i] + "</div>";
       }
-      highlight_first();
+      highlight_first(src_list, target_div_id);
     }
 
-    function toggle_loader(){
 
-    }
-
-    function clear_highlight(){
-      for(var i=0;i<list.length;i++){
+    function clear_highlight(src_list, target_div_id){
+      for(let i=0;i<src_list.length;i++){
         try{
-          item("li_" + i).className = "";
+          item("li_" + target_div_id + "_" + i).className = "";
         }
         catch(e){
           //supress error
@@ -231,10 +241,10 @@
       }
     }
 
-    function highlight_first(){
-      clear_highlight();
+    function highlight_first(src_list, target_div_id){
+      clear_highlight(src_list, target_div_id);
       try{
-        item("li_0").className = "highlighted";
+        item("li_" + target_div_id + "_0").className = "highlighted";
       }
       catch(e){
         //supress error
@@ -258,50 +268,46 @@
       return array;
     }
 
-    function sort_list(){
-      list.sort()
-      load_list();
+    function sort_list(src_list, target_div_id){
+      src_list.sort()
+      load_list(src_list, target_div_id);
     }
 
-    function randomize_list(){
-      list = shuffle(list);
-      load_list();
+    function randomize_list(src_list, target_div_id){
+      src_list = shuffle(src_list);
+      load_list(src_list, target_div_id);
     }
 
-    function getRandomItem(){
-      var randNo = Math.round(Math.random() * (list.length-1));
+    function getRandomItem(src_list){
+      let randNo = Math.round(Math.random() * (src_list.length-1));
       return randNo;
     }
 
-    function highlight_random(count){
-      clear_highlight();
-      var randNo = getRandomItem();
-      item("li_" + randNo).className = "highlighted";
+    function highlight_random(src_list, target_div_id,count){
+      clear_highlight(src_list, target_div_id);
+      let randNo = getRandomItem(src_list);
+      item("li_" + target_div_id + "_" + randNo).className = "highlighted";
       if(count < Math.random()*200){
-          window.setTimeout("highlight_random(" + eval(count+1) + ")" , 150);
+          window.setTimeout(function(){
+            highlight_random(src_list, target_div_id , eval(count+1) )
+          } , 120);
       }
     }
 
 
-    function remove_top(){
-      if(list.length>0){
-        list.splice(0, 1);
-      }
-    }
-
-    function remove_highlighted_item(){
-      for(var i=list.length-1;i>=0;i--){
-        if(item("li_" + i).className == "highlighted"){
-          list.splice(i, 1); // 2nd parameter means remove one item only
+    function remove_highlighted_item(src_list, target_div_id,count){
+      for(let i=src_list.length-1;i>=0;i--){
+        if(item("li_" + target_div_id + "_" + i).className == "highlighted"){
+          src_list.splice(i, 1); // 2nd parameter means remove one item only
         }
       }
-      load_list();
+      load_list(src_list, target_div_id,count);
     }
 
     function populate_icebreaker_category_selection(){
       let category_select = item("icebreaker_categories")
-      for(var i in icebreakers){
-        var opt = document.createElement("option");
+      for(let i in icebreakers){
+        let opt = document.createElement("option");
         opt.value= i;
         opt.innerHTML = i; // whatever property it has
 
@@ -312,18 +318,19 @@
 
     function load_icebreaker_category(src){
       let val = src.value;
-      list = icebreakers[val];
-      load_list();
+      question_list = icebreakers[val];
+      load_list(question_list, "loaded_list");
+      item("icebreaker_buttons").className = "";
     }
 
   </script>
 
   <style>
-    #loaded_list{
+    #loaded_list, #custom_loaded_list{
       padding:20px;
       line-height: 32px;
       width:1000px;
-      font-size:18px;
+      font-size:20px;
     }
 
     #input{
@@ -332,11 +339,15 @@
     }
 
     input[type=button]{
-      margin:10px;
-      padding:10px;
-      font-size:15px;
-      font-weight: bold;
+      margin:3px;
+      padding-top:16px;
+      padding-bottom:16px;
+      padding-left:25px;
+      padding-right:25px;
+      /* font-size:15px; */
+      /* font-weight: bold; */
     }
+
 
     select{
       margin:10px;
@@ -358,12 +369,74 @@
       padding-top:24px;
       padding-bottom:10px
     }
+
+    .hidden{
+      visibility:hidden;
+      height:0px;
+      overflow: hidden;
+    }
+
+    .logo{
+      width:200px;
+    }
+
+    /* button */
+.button {
+  background-color: #38a7cc;
+  border: 0;
+  border-radius: 56px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: system-ui,-apple-system,system-ui,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  outline: 0;
+  padding: 16px 21px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: all .3s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button:before {
+  background-color: initial;
+  background-image: linear-gradient(#fff 0, rgba(255, 255, 255, 0) 100%);
+  border-radius: 125px;
+  content: "";
+  height: 50%;
+  left: 4%;
+  opacity: .5;
+  position: absolute;
+  top: 0;
+  transition: all .3s;
+  width: 92%;
+}
+
+.button:hover {
+  box-shadow: rgba(255, 255, 255, .2) 0 3px 15px inset, rgba(0, 0, 0, .1) 0 3px 5px, rgba(0, 0, 0, .1) 0 10px 13px;
+  transform: scale(1.05);
+}
+
+@media (min-width: 768px) {
+  .button {
+    padding: 16px 48px;
+  }
+}
   </style>
 
   </head>
   <body onload="populate_icebreaker_category_selection()">
 
+    <div>
+      <img src="images/logo.svg" alt="Credit Scores, Credit Reports &amp; Credit Check" class=" logo">
+    </div>
+
 <div class="header1">Enter a custom list of items to load into the randomizer:</div>
+<div id="load_custom">
 <div id="loader">
   <textarea id="input">
 Raj
@@ -374,25 +447,42 @@ Bob
 Christina
   </textarea> 
 </div> 
+
 <div>
-  <input type="button" id="load_list" onclick="load_list_from_input()" value="Load List" /> 
-  <!-- <input type="button" id="toggle_loader" onclick="toggle_loader()" value="Toggle Loader"/> -->
+  <input type="button" class="button" id="load_list" onclick="load_list_from_input(custom_list,'custom_loaded_list')" value="Load List" /> 
+  <!-- <input type="button" class="button" id="toggle_loader" onclick="toggle_loader()" value="Toggle Loader"/> -->
+</div>
 </div>
 
+<div id="custom_container" class="hidden">
 
+  <div>
+    <input type="button" class="button" id="custom_sort" onclick="sort_list(custom_list,'custom_loaded_list')" value="Sort List" /> 
+    <input type="button" class="button" id="custom_randomize" onclick="randomize_list(custom_list,'custom_loaded_list')" value="Randomize List" /> 
+    <input type="button" class="button" id="custom_highlight_random" onclick="highlight_random(custom_list,'custom_loaded_list',0)" value="Highlight Random List Item"/>
+    <input type="button" class="button" id="custom_remove_highlighted" onclick="remove_highlighted_item(custom_list,'custom_loaded_list')" value="Remove Highlighted Item"/>
+    <input type="button" class="button" id="custom_edit_list" onclick="custom_edit_list(custom_list,'custom_loaded_list')" value="Edit Custom List"/>
+  </div>
+
+  <div id="custom_loaded_list">
+
+  </div>
+</div>
+
+<hr/>
 <div class="header1">OPTIONAL: Pick a category of Icebreaker questions:</div>
 <div>
 <select id="icebreaker_categories" onchange="load_icebreaker_category(this)">
   <option value="" selected="true"> -- choose an icebreaker category --</option>
 </select>
-</div><br/><br/>
+</div><br/>
 
 
-<div>
-  <input type="button" id="sort" onclick="sort_list()" value="Sort List" /> 
-  <input type="button" id="randomize" onclick="randomize_list()" value="Randomize List" /> 
-  <input type="button" id="highlight_random" onclick="highlight_random(0)" value="Highlight Random List Item"/>
-  <input type="button" id="remove_highlighted" onclick="remove_highlighted_item()" value="Remove Highlighted Item"/>
+<div id="icebreaker_buttons" class="hidden">
+  <input type="button" class="button" id="sort" onclick="sort_list(question_list,'loaded_list')" value="Sort List" /> 
+  <input type="button" class="button" id="randomize" onclick="randomize_list(question_list,'loaded_list')" value="Randomize List" /> 
+  <input type="button" class="button" id="highlight_random" onclick="highlight_random(question_list,'loaded_list',0)" value="Highlight Random List Item"/>
+  <input type="button" class="button" id="remove_highlighted" onclick="remove_highlighted_item(question_list,'loaded_list')" value="Remove Highlighted Item"/>
 </div>
 
 <div id="loaded_list">
