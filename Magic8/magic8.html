@@ -38,6 +38,10 @@
        var question = document.getElementById("question");
        var customResponses = document.getElementById("custom_responses");
        
+       answer.addEventListener("click", async function() {
+        eightball.click()
+       })
+
        eightball.addEventListener("click", async function() {
         if (isIgnore) {
           return;
@@ -88,6 +92,9 @@
   </script>
   
   <style type="text/css">
+    body {
+      background-image: url("8ball_img/space.jpg");
+    }
     h1 { font-weight: 100; font-size: 2.5em;}
     
     #content { 
@@ -268,6 +275,7 @@ h1 > .magic > .magic-text {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   white-space: nowrap;
+  font-size: 1.2em;
 }
 
 #source-link > i {
@@ -315,12 +323,15 @@ h1 > .magic > .magic-text {
   font-family: "Rubik", sans-serif;
   transition: color 600ms;
 }
+#header {
+  color: white;
+}
   </style>
   
  </head>
  <body>
   <div id="content">
-    <h1>
+    <h1 id="header">
     Ask what knowledge is desired and click the 
     <span class="magic">
       <span class="magic-star">
@@ -339,8 +350,9 @@ h1 > .magic > .magic-text {
         </svg>
       </span>
       <span class="magic-text">Magic 8 Ball</span>
+      to reveal your
+      <spanv class="magic-text">destiny</span>
     </span>
-    to reveal your destiny
   </h1>
     <input type="text" id="question" hidden="true" />
     <div id="eight-ball" class="eight-ball">
