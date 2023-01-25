@@ -38,56 +38,56 @@
        var eightball = document.getElementById("ball");
        var question = document.getElementById("question");
        var customResponses = document.getElementById("custom_responses");
+       var onlyCustom = false;
        
        answerClass.addEventListener("click", async function() {
         eightball.click()
        })
 
-       eightball.addEventListener("click", async function() {
+      eightball.addEventListener("click", async function() {
         if (isIgnore) {
           return;
         }
         isIgnore = true;
         eightball.classList.remove('shake');
-         if (question.value.length < 1 && 1==0) {
-           alert('Enter a question!');
-         } else {
-            if( customResponses.value.length > 1 && customResponses.value.match(/\n/)){
-                answers = customResponses.value.split("\n")
-            } else {
-                answers = default_answers;
-            }
-           answer.innerText = "";
-           var num = Math.floor(Math.random() * Math.floor(answers.length));
-           eightball.classList.add('shake');
-           answer.innerText = answers[num];
-           await sleep(2000);
-           eightball.classList.remove('shake');
-           isIgnore = false;
-         }
-       });
-       let index = 0,
-        interval = 1000;
-
-        const rand = (min, max) => 
-          Math.floor(Math.random() * (max - min + 1)) + min;
-
-          const animate = star => {
-            star.style.setProperty("--star-left", `${rand(-10, 100)}%`);
-            star.style.setProperty("--star-top", `${rand(-40, 80)}%`);
-
-            star.style.animation = "none";
-            star.offsetHeight;
-            star.style.animation = "";
+        
+        if (question.value.length < 1 && 1==0) {
+          alert('Enter a question!');
+        } else {
+          let customAnswers = customResponses.value.split("\n")
+          answers = Array.from(new Set([...customAnswers, ...default_answers]))
+          answer.innerText = "";
+          var num = Math.floor(Math.random() * Math.floor(answers.length));
+          eightball.classList.add('shake');
+          answer.innerText = answers[num];
+          await sleep(2000);
+          eightball.classList.remove('shake');
+          isIgnore = false;
         }
+      });
 
-        for(const star of document.getElementsByClassName("magic-star")) {
-          setTimeout(() => {
-            animate(star);
-            
-            setInterval(() => animate(star), 1000);
-          }, index++ * (interval / 3))
-        }
+      let index = 0,
+      interval = 1000;
+
+      const rand = (min, max) => 
+        Math.floor(Math.random() * (max - min + 1)) + min;
+
+        const animate = star => {
+          star.style.setProperty("--star-left", `${rand(-10, 100)}%`);
+          star.style.setProperty("--star-top", `${rand(-40, 80)}%`);
+
+          star.style.animation = "none";
+          star.offsetHeight;
+          star.style.animation = "";
+      }
+
+      for(const star of document.getElementsByClassName("magic-star")) {
+        setTimeout(() => {
+          animate(star);
+          
+          setInterval(() => animate(star), 1000);
+        }, index++ * (interval / 3))
+      }
     };
     
   </script>
@@ -235,6 +235,7 @@ h1 {
   margin: 0px;
   padding: 20px;
   text-align: center;
+  color: white;
 }
 
 h1 > .magic {
@@ -288,7 +289,7 @@ h1 > .magic > .magic-text {
  <body>
   <div id="content">
     <h1 id="header">
-    Ask what knowledge is desired and click the 
+    Ask what knowledge you seek and click the 
     <span class="magic">
       <span class="magic-star">
         <svg viewBox="0 0 512 512">
@@ -322,10 +323,10 @@ h1 > .magic > .magic-text {
       </div>
     </div>
     <div>
-        Custom Responses:<br/>
-        <textarea id="custom_responses">yes
-no
-maybe</textarea><br/><br/>
+        <h1>Custom Responses:</h1>
+        <textarea id="custom_responses">Yes
+No
+Maybe</textarea><br/><br/>
     </div>
   </div>
  </body>
