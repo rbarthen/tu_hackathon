@@ -33,45 +33,75 @@
     
     window.onload = function() {
        var isIgnore = false;
+       var answerClass = document.getElementsByClassName("answer")[0]
        var answer = document.getElementById("answer");
        var eightball = document.getElementById("ball");
        var question = document.getElementById("question");
        var customResponses = document.getElementById("custom_responses");
+       var onlyCustom = false;
        
-       eightball.addEventListener("click", async function() {
+       answerClass.addEventListener("click", async function() {
+        eightball.click()
+       })
+
+      eightball.addEventListener("click", async function() {
         if (isIgnore) {
           return;
         }
         isIgnore = true;
         eightball.classList.remove('shake');
-         if (question.value.length < 1 && 1==0) {
-           alert('Enter a question!');
-         } else {
-            if( customResponses.value.length > 1 && customResponses.value.match(/\n/)){
-                answers = customResponses.value.split("\n")
-            } else {
-                answers = default_answers;
-            }
-           answer.innerText = "";
-           var num = Math.floor(Math.random() * Math.floor(answers.length));
-           eightball.classList.add('shake');
-           answer.innerText = answers[num];
-           await sleep(2000);
-           eightball.classList.remove('shake');
-           isIgnore = false;
-         }
-       });
+        
+        if (question.value.length < 1 && 1==0) {
+          alert('Enter a question!');
+        } else {
+          let customAnswers = customResponses.value.split("\n")
+          answers = Array.from(new Set([...customAnswers, ...default_answers]))
+          answer.innerText = "";
+          var num = Math.floor(Math.random() * Math.floor(answers.length));
+          eightball.classList.add('shake');
+          answer.innerText = answers[num];
+          await sleep(2000);
+          eightball.classList.remove('shake');
+          isIgnore = false;
+        }
+      });
+
+      let index = 0,
+      interval = 1000;
+
+      const rand = (min, max) => 
+        Math.floor(Math.random() * (max - min + 1)) + min;
+
+        const animate = star => {
+          star.style.setProperty("--star-left", `${rand(-10, 100)}%`);
+          star.style.setProperty("--star-top", `${rand(-40, 80)}%`);
+
+          star.style.animation = "none";
+          star.offsetHeight;
+          star.style.animation = "";
+      }
+
+      for(const star of document.getElementsByClassName("magic-star")) {
+        setTimeout(() => {
+          animate(star);
+          
+          setInterval(() => animate(star), 1000);
+        }, index++ * (interval / 3))
+      }
     };
+    
   </script>
   
   <style type="text/css">
+    body {
+      background-image: url("8ball_img/space.jpg");
+    }
     h1 { font-weight: 100; font-size: 2.5em;}
     
     #content { 
      width: 600px; 
      margin: 0 auto; 
      margin-top: 25px; 
-     border: 1px dotted black;
      text-align: center; 
      font-family: 'Helvetica Neue', arial; 
      font-weight: 100;
@@ -100,22 +130,23 @@
     }
     @keyframes shake 
     {
-      0% { transform: translate(80px, 0px) rotate(0deg); }
-      20% { transform: translate(-80px, 0px) rotate(0deg); }
-      30% { transform: translate(60px,0px) rotate(0deg); }
-      40% { transform: translate(-60px, 0px) rotate(0deg); }
-      50% { transform: translate(40px,0px) rotate(0deg); }
-      60% { transform: translate(-40px, 0px) rotate(0deg); }
-      70% { transform: translate(20px, 0px) rotate(0deg); }
-      80% { transform: translate(-20px, 0px) rotate(0deg); }
-      90% { transform: translate(5px, 0px) rotate(0deg); }
-      100% { transform: translate(-5px, 0px) rotate(0deg); }
+      0% { transform: scale(1,1) translate(80px, 0px); }
+      20% { transform: scale(1.2,1.2) translate(-80px, 0px); }
+      30% { transform: scale(1.3,1.3) translate(60px,0px); }
+      40% { transform: scale(1.4,1.4) translate(-60px, 0px); }
+      50% { transform: scale(1.5,1.5) translate(40px,0px); }
+      60% { transform: scale(1.5,1.5) translate(-40px, 0px); }
+      70% { transform: scale(1.4,1.4) translate(20px, 0px); }
+      80% { transform: scale(1.3,1.3) translate(-20px, 0px); }
+      90% { transform: scale(1.2,1.2) translate(5px, 0px); }
+      100% { transform: scale(1,1) translate(-5px, 0px); }
     }
 
     #wrapper {
       width: 100%;
       display: flex;
       justify-content: center;
+      position: relative;
     }
     #wrapper div{
       width: max-content;
@@ -139,20 +170,147 @@
       color: orange;
       justify-self: center;
       align-self: center;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
+      bottom: 50%;
+      left: 46.5%;
+      min-height: 50px;
+      max-height: 50px;
+      min-width: 50px;
+      max-width: 50px;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+    }
+
+    #answer {
+      align-self: center;
     }
 
     #wrapper div.shake + .answer #answer {
       animation: display-message 2s;
       animation-iteration-count: 1;
     }
+    /*  */
+    :root {  
+  --color1: rgb(151, 162, 31);
+  --violet: rgb(103, 58, 183);
+  --pink: rgb(244, 143, 177);
+  --color4: rgb(236, 206, 216);
+}
+
+@keyframes background-pan {
+  from {
+    background-position: 0% center;
+  }
+  
+  to {
+    background-position: -200% center;
+  }
+}
+
+@keyframes scale {
+  from, to {
+    transform: scale(0);
+  }
+  
+  50% {
+    transform: scale(1);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+h1 {
+  font-family: "Rubik", sans-serif;
+  font-size: clamp(2em, 2vw, 4em);
+  font-weight: 400;
+  margin: 0px;
+  padding: 20px;
+  text-align: center;
+  color: white;
+}
+
+h1 > .magic {
+  display: inline-block;
+  position: relative;
+}
+
+h1 > .magic > .magic-star {
+  --size: clamp(20px, 1.5vw, 30px);
+  
+  animation: scale 700ms ease forwards;
+  display: block;
+  height: var(--size);
+  left: var(--star-left);
+  position: absolute;
+  top: var(--star-top);
+  width: var(--size);
+}
+
+h1 > .magic > .magic-star > svg {
+  animation: rotate 1000ms linear infinite;
+  display: block;
+  opacity: 0.7;
+}
+
+h1 > .magic > .magic-star > svg > path {
+  fill: var(--color4);
+}
+
+h1 > .magic > .magic-text {
+  animation: background-pan 3s linear infinite;
+  background: linear-gradient(
+    to right,
+    var(--color1),
+    var(--violet),
+    var(--pink),
+    var(--color1)
+  );
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+  font-size: 1.2em;
+}
+#header {
+  color: white;
+}
   </style>
   
  </head>
  <body>
   <div id="content">
-    <h1>Magic 8 ball</h1>
-    <p id="info">Ask me what you want to know and click on the Magic 8 Ball</p>
+    <h1 id="header">
+    Ask what knowledge you seek and click the 
+    <span class="magic">
+      <span class="magic-star">
+        <svg viewBox="0 0 512 512">
+        <path d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z" />
+        </svg>
+      </span>
+      <span class="magic-star">
+        <svg viewBox="0 0 512 512">
+        <path d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z" />
+        </svg>
+      </span>
+      <span class="magic-star">
+        <svg viewBox="0 0 512 512">
+        <path d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z" />
+        </svg>
+      </span>
+      <span class="magic-text">Magic 8 Ball</span>
+      to reveal your
+      <spanv class="magic-text">destiny</span>
+    </span>
+  </h1>
     <input type="text" id="question" hidden="true" />
     <div id="eight-ball" class="eight-ball">
       <div id="wrapper">
@@ -160,15 +318,15 @@
           <img src="8ball_img/8ball.png" width="400" height="400" id="ball-img">
         </div>
         <div class="answer">
-          <p id="answer">Ask <br>and <br>shake</p>
+          <span id="answer">Ask <br>and <br>shake</span>
         </div>
       </div>
     </div>
     <div>
-        Custom Responses:<br/>
-        <textarea id="custom_responses">yes
-no
-maybe</textarea><br/><br/>
+        <h1>Custom Responses:</h1>
+        <textarea id="custom_responses">Yes
+No
+Maybe</textarea><br/><br/>
     </div>
   </div>
  </body>
