@@ -3,7 +3,7 @@
   <title>Randomizer</title>
 
   <script>
-    let custom_list = [
+    var custom_list = [
       "Raj",
       "James",
       "Tom",
@@ -12,11 +12,11 @@
       "Christina"
     ]
 
-    let question_list = [
+    var question_list = [
       ""
     ];
 
-    let icebreakers = {
+    var icebreakers = {
       "Virtual (work from home)": [
 "Do you love working from home or would you rather be in the office? Is there a balance of both that you like best?",
 "What’s the hardest part about working virtually for you? The easiest?",
@@ -196,7 +196,7 @@
         return document.getElementById(id);
     }
 
-    function clean_list(src_list,target_div_id){
+    function clean_list(src_list){
       for(let i=src_list.length-1;i>=0;i--){
         if(src_list[i].replace(/\s/g,"") =="" ){
           src_list.splice(i, 1); // 2nd parameter means remove one item only
@@ -206,10 +206,10 @@
 
     function load_list_from_input(src_list, target_div_id){
       if( item("input").value.length > 1 && item("input").value.match(/\n/)){
-        src_list = item("input").value.split("\n");
+        custom_list = item("input").value.split("\n");
       }
-      clean_list(src_list,target_div_id);
-      load_list(src_list,target_div_id);
+      clean_list(custom_list);
+      load_list(custom_list,target_div_id);
 
       item("custom_container").className = "";
       item("load_custom").className = "hidden";
@@ -444,8 +444,7 @@ James
 Tom
 Suyash
 Bob
-Christina
-  </textarea> 
+Christina</textarea> 
 </div> 
 
 <div>
