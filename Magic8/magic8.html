@@ -32,13 +32,18 @@
     }
     
     window.onload = function() {
-       var eight = document.getElementById("eight");
+       var isIgnore = false;
        var answer = document.getElementById("answer");
-       var eightball = document.getElementById("eight-ball");
+       var eightball = document.getElementById("ball");
        var question = document.getElementById("question");
        var customResponses = document.getElementById("custom_responses");
        
        eightball.addEventListener("click", async function() {
+        if (isIgnore) {
+          return;
+        }
+        isIgnore = true;
+        eightball.classList.remove('shake');
          if (question.value.length < 1 && 1==0) {
            alert('Enter a question!');
          } else {
@@ -47,12 +52,13 @@
             } else {
                 answers = default_answers;
             }
-
-           eight.innerText = "";
            answer.innerText = "";
-           await sleep(400);
            var num = Math.floor(Math.random() * Math.floor(answers.length));
+           eightball.classList.add('shake');
            answer.innerText = answers[num];
+           await sleep(2000);
+           eightball.classList.remove('shake');
+           isIgnore = false;
          }
        });
     };
@@ -64,62 +70,81 @@
     #content { 
      width: 600px; 
      margin: 0 auto; 
-     margin-top: 50px; 
+     margin-top: 25px; 
      border: 1px dotted black;
      text-align: center; 
      font-family: 'Helvetica Neue', arial; 
      font-weight: 100;
    }
     
-    div.eight-ball {
-      background-color: black;
-      border: 1px solid black;
-      border-radius: 50%;
-      width: 300px;
-      height: 300px;
-      margin: 0 auto;
-      margin-bottom: 30px;
-      margin-top: 30px;
-    }
-    
-    div.answer {
-      background-color: #333;
-      border: 1px solid #333;
-      border-radius: 50%;
-      width: 50%;
-      height: 50%;
-      margin: 25% auto;
-    }
-    
-    p#eight {
-      font-size: 5em;
-      margin: 20% auto;
-      color: white;
-    }
-    
-    p#answer {
-      padding: 23px;
-      color: lightblue;
-      letter-spacing: 2px;
-      font-size:18px;
-    }
-    
-    #question {
-      margin: 20px;
-      padding: 10px;
-      width: 400px;
-      font-size:22px;
-    }
-    
     #info {
+      display: block;
       font-size: 22px;
     }
     
     #custom_responses {
-        width:500px;
-        height:300px;
-        padding:10px;
-        font-size:15px;
+      display: block;
+      width:500px;
+      height:300px;
+      padding:10px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+      font-size:15px;
+    }
+
+    #eight-ball {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    @keyframes shake 
+    {
+      0% { transform: translate(80px, 0px) rotate(0deg); }
+      20% { transform: translate(-80px, 0px) rotate(0deg); }
+      30% { transform: translate(60px,0px) rotate(0deg); }
+      40% { transform: translate(-60px, 0px) rotate(0deg); }
+      50% { transform: translate(40px,0px) rotate(0deg); }
+      60% { transform: translate(-40px, 0px) rotate(0deg); }
+      70% { transform: translate(20px, 0px) rotate(0deg); }
+      80% { transform: translate(-20px, 0px) rotate(0deg); }
+      90% { transform: translate(5px, 0px) rotate(0deg); }
+      100% { transform: translate(-5px, 0px) rotate(0deg); }
+    }
+
+    #wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    #wrapper div{
+      width: max-content;
+    }
+    #wrapper div.shake{
+      animation: shake 1s;
+      animation-iteration-count:1;
+    }
+    @keyframes display-message {
+      from, 50% {
+        opacity:0;
+      }
+      100% {
+        opacity:100;
+        transform:none;
+      }
+    }
+
+    .answer {
+      position: absolute;
+      color: orange;
+      justify-self: center;
+      align-self: center;
+      font-size: 0.75rem;
+    }
+
+    #wrapper div.shake + .answer #answer {
+      animation: display-message 2s;
+      animation-iteration-count: 1;
     }
   </style>
   
@@ -130,9 +155,13 @@
     <p id="info">Ask me what you want to know and click on the Magic 8 Ball</p>
     <input type="text" id="question" hidden="true" />
     <div id="eight-ball" class="eight-ball">
-      <div class="answer">
-        <p id="eight">8</p>
-        <p id="answer"></p>
+      <div id="wrapper">
+        <div id="ball">
+          <img src="8ball_img/8ball.png" width="400" height="400" id="ball-img">
+        </div>
+        <div class="answer">
+          <p id="answer">Ask <br>and <br>shake</p>
+        </div>
       </div>
     </div>
     <div>
