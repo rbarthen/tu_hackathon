@@ -426,6 +426,10 @@
     padding: 16px 48px;
   }
 }
+
+#custom_container{
+  margin-top:14px;
+}
   </style>
 
   </head>
@@ -435,8 +439,9 @@
       <img src="images/logo.svg" alt="Credit Scores, Credit Reports &amp; Credit Check" class=" logo">
     </div>
 
-<div class="header1">Enter a custom list of items to load into the randomizer:</div>
+
 <div id="load_custom">
+  <div class="header1">Enter a custom list of items to load into the randomizer:</div>
 <div id="loader">
   <textarea id="input">
 Raj
@@ -469,7 +474,7 @@ Christina</textarea>
 </div>
 
 <hr/>
-<div class="header1">OPTIONAL: Pick a category of Icebreaker questions:</div>
+<div class="header1">Load Icebreaker questions by category:</div>
 <div>
 <select id="icebreaker_categories" onchange="load_icebreaker_category(this)">
   <option value="" selected="true"> -- choose an icebreaker category --</option>
