@@ -116,6 +116,7 @@
       width: 100%;
       display: flex;
       justify-content: center;
+      position: relative;
     }
     #wrapper div{
       width: max-content;
@@ -139,7 +140,20 @@
       color: orange;
       justify-self: center;
       align-self: center;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
+      bottom: 50%;
+      left: 46.5%;
+      min-height: 50px;
+      max-height: 50px;
+      min-width: 50px;
+      max-width: 50px;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+    }
+
+    #answer {
+      align-self: center;
     }
 
     #wrapper div.shake + .answer #answer {
@@ -160,7 +174,7 @@
           <img src="8ball_img/8ball.png" width="400" height="400" id="ball-img">
         </div>
         <div class="answer">
-          <p id="answer">Ask <br>and <br>shake</p>
+          <span id="answer">Ask <br>and <br>shake</span>
         </div>
       </div>
     </div>
