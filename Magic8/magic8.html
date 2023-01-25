@@ -33,12 +33,13 @@
     
     window.onload = function() {
        var isIgnore = false;
+       var answerClass = document.getElementsByClassName("answer")[0]
        var answer = document.getElementById("answer");
        var eightball = document.getElementById("ball");
        var question = document.getElementById("question");
        var customResponses = document.getElementById("custom_responses");
        
-       answer.addEventListener("click", async function() {
+       answerClass.addEventListener("click", async function() {
         eightball.click()
        })
 
