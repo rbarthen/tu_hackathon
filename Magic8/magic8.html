@@ -114,8 +114,8 @@
     
     #custom_responses {
       display: block;
-      width:500px;
-      height:300px;
+      width:100%;
+      height: 150px;
       padding:10px;
       margin-left: auto;
       margin-right: auto;
@@ -192,97 +192,203 @@
     }
     /*  */
     :root {  
-  --color1: rgb(151, 162, 31);
-  --violet: rgb(103, 58, 183);
-  --pink: rgb(244, 143, 177);
-  --color4: rgb(236, 206, 216);
-}
+      --color1: rgb(151, 162, 31);
+      --violet: rgb(103, 58, 183);
+      --pink: rgb(244, 143, 177);
+      --color4: rgb(236, 206, 216);
+    }
 
-@keyframes background-pan {
-  from {
-    background-position: 0% center;
-  }
-  
-  to {
-    background-position: -200% center;
-  }
-}
+    @keyframes background-pan {
+      from {
+        background-position: 0% center;
+      }
+      
+      to {
+        background-position: -200% center;
+      }
+    }
 
-@keyframes scale {
-  from, to {
-    transform: scale(0);
-  }
-  
-  50% {
-    transform: scale(1);
-  }
-}
+    @keyframes scale {
+      from, to {
+        transform: scale(0);
+      }
+      
+      50% {
+        transform: scale(1);
+      }
+    }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  
-  to {
-    transform: rotate(180deg);
-  }
-}
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+      
+      to {
+        transform: rotate(180deg);
+      }
+    }
 
-h1 {
-  font-family: "Rubik", sans-serif;
-  font-size: clamp(2em, 2vw, 4em);
-  font-weight: 400;
-  margin: 0px;
-  padding: 20px;
-  text-align: center;
-  color: white;
-}
+    h1 {
+      font-family: "Rubik", sans-serif;
+      font-size: clamp(2em, 2vw, 4em);
+      font-weight: 400;
+      margin: 0px;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
 
-h1 > .magic {
-  display: inline-block;
-  position: relative;
-}
+    h1 > .magic {
+      display: inline-block;
+      position: relative;
+    }
 
-h1 > .magic > .magic-star {
-  --size: clamp(20px, 1.5vw, 30px);
-  
-  animation: scale 700ms ease forwards;
-  display: block;
-  height: var(--size);
-  left: var(--star-left);
-  position: absolute;
-  top: var(--star-top);
-  width: var(--size);
-}
+    h1 > .magic > .magic-star {
+      --size: clamp(20px, 1.5vw, 30px);
+      
+      animation: scale 700ms ease forwards;
+      display: block;
+      height: var(--size);
+      left: var(--star-left);
+      position: absolute;
+      top: var(--star-top);
+      width: var(--size);
+    }
 
-h1 > .magic > .magic-star > svg {
-  animation: rotate 1000ms linear infinite;
-  display: block;
-  opacity: 0.7;
-}
+    h1 > .magic > .magic-star > svg {
+      animation: rotate 1000ms linear infinite;
+      display: block;
+      opacity: 0.7;
+    }
 
-h1 > .magic > .magic-star > svg > path {
-  fill: var(--color4);
-}
+    h1 > .magic > .magic-star > svg > path {
+      fill: var(--color4);
+    }
 
-h1 > .magic > .magic-text {
-  animation: background-pan 3s linear infinite;
-  background: linear-gradient(
-    to right,
-    var(--color1),
-    var(--violet),
-    var(--pink),
-    var(--color1)
-  );
-  background-size: 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  white-space: nowrap;
-  font-size: 1.2em;
-}
-#header {
-  color: white;
-}
+    h1 > .magic > .magic-text {
+      animation: background-pan 3s linear infinite;
+      background: linear-gradient(
+        to right,
+        var(--color1),
+        var(--violet),
+        var(--pink),
+        var(--color1)
+      );
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      font-size: 1.2em;
+    }
+    #header {
+      color: white;
+    }
+
+    .stage,
+    .ufo,
+    .alien-window {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .ufo {
+      flex-direction: column;
+      position: relative;
+    }
+
+    .alien-window,
+    .saucer,
+    .ground {
+      border-radius: 50%;
+    }
+
+    .alien-window {
+      position: absolute;
+      top: -12px;
+      z-index: 3;
+      width: 77px;
+      height: 35px;
+      background-color: #bdeed7;
+    }
+
+    .saucer,
+    .ground {
+      width: 183px;
+      height: 43px;
+    }
+
+    .saucer {
+      position: relative;
+      z-index: 2;
+      background-color: #9bceb0;
+    }
+
+    .ground {
+      width: 186px;
+      background-color: #66bb7e;
+      position: relative;
+      bottom: 2.2rem;
+    }
+
+    .alien {
+      font-size: 24px;
+    }
+
+    @keyframes beam-me-up {
+      0% {
+        transform: translatey(0px) rotate(0deg);
+      }
+      33% {
+        transform: translatey(-60px) rotate(-10deg);
+      }
+      66% {
+        transform: translatey(-30px) rotate(5deg);
+      }
+      100% {
+        transform: translatey(0px) rotate(0deg);
+      }
+    }
+
+    .abducted {
+      bottom: 50px;
+      position: relative;
+      z-index: 2;
+      font-size: .8rem;
+      display: flex;
+      justify-self: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .beam {
+      margin-top: -40px;
+      border-left: 92px solid transparent;
+      border-right: 92px solid transparent;
+      border-bottom: 183px solid #abffb3;
+    }
+
+    .stage:hover {
+      cursor: pointer;
+    }
+    .stage:hover .abducted{
+      animation: beam-me-up 7s ease-in-out infinite;
+    }
+
+    .footer {
+      display: flex;
+      /* width: 100%; */
+      align-items: center;
+      justify-content: space-between;
+      padding-right: 10%;
+      padding-left: 10%;
+    }
+    .inner-footer {
+      display: flex;
+      align-content: center;
+      align-items: center;
+    }
   </style>
   
  </head>
@@ -322,11 +428,56 @@ h1 > .magic > .magic-text {
         </div>
       </div>
     </div>
-    <div>
-        <h1>Custom Responses:</h1>
+  </div>
+  <div class="footer">
+    <div class="inner-footer">
+      <div class="stage" id="footer-item-1">
+        <div class="scene">
+          <div class="ufo">
+            <div class="alien-window">
+              <div class="alien">
+                👽
+              </div>
+            </div>
+            <div class="saucer"></div>
+          </div>
+          <div class="beam"></div>
+          <div class="abducted">
+            <span>Custom Responses</span>
+          </div>
+          <div class="ground"></div>
+        </div>
+      </div>
+      <div>
         <textarea id="custom_responses">Yes
 No
 Maybe</textarea><br/><br/>
+      </div>
+    </div>
+    <div class="inner-footer">
+      
+      <div>
+        <textarea id="custom_responses">Yes
+No
+Maybe</textarea><br/><br/>
+      </div>
+      <div class="stage" id="footer-item-1">
+        <div class="scene">
+          <div class="ufo">
+            <div class="alien-window">
+              <div class="alien">
+                👽
+              </div>
+            </div>
+            <div class="saucer"></div>
+          </div>
+          <div class="beam"></div>
+          <div class="abducted">
+            <span>Default Responses</span>
+          </div>
+          <div class="ground"></div>
+        </div>
+      </div>
     </div>
   </div>
  </body>
