@@ -424,10 +424,31 @@
       align-content: center;
       align-items: center;
     }
+    #logo {
+      position: absolute;
+      height: 200px;
+      width: 200px;
+      margin-top: -25px;
+      padding-top: 10px;
+      padding-left: 10px;
+    }
+    #home-button {
+      position: absolute;
+      top:0;
+      right: 0;
+      font-size: 4em;
+      padding-right: 5px;
+    }
   </style>
   
  </head>
  <body>
+  <div id="logo">
+    
+      <img src="../images/logo.svg"/>
+    
+  </div>
+  <div id="home-button"><a href="../index.html">&#127968;</a></div>
   <div id="content">
     <h1 id="header">
     Ask what knowledge you seek and click the 
@@ -490,7 +511,6 @@ Surprisingly, yes</textarea><br/><br/>
       </div>
     </div>
     <div class="inner-footer">
-      
       <div>
         <textarea id="default_responses"></textarea><br/><br/>
       </div>
