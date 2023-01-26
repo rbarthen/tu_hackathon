@@ -1,7 +1,51 @@
 <html>
  <head>
   <title>Home</title>
+  <script type="text/javascript">
+    window.onload = function() {
+    var textBox = document.getElementsByClassName('text_box')[0]
+    //var chars = ['A','B','C','D', 'E','F','G','H', 'I','J','K','L', 'M','N','O','P', 'Q','R','S','T', 'U','V','W','X', 'Y','Z'];
+    var specialCharacters = ['!','§','$','%', '&','/','(',')', '=','?','_','<', '>','^','°','*', '#','-',':',';','~'];
+    const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+    var newStringSplit = "";
+    var time = 80; //125
+    var count = 0, j = 0;
+    var delayAnimation = 0;
+    
+    function startScrambleText(){
+        stringSplit = textBox.innerHTML.split('');
+        textBox.style = ({
+        'width': stringSplit.length + 'ch',
+        'animation': 'typing '+ ((time * stringSplit.length) / 1000) +'s steps('+ stringSplit.length +')'
+        });
+        
+        var interval = setInterval(function(){
+        
+        newStringSplit = "";
 
+        for(i = 0; i <= stringSplit.length-1; i++){
+
+            if(i <= j && count >= stringSplit.length+delayAnimation){
+            newStringSplit += stringSplit[i];
+            }else{
+            newStringSplit += specialCharacters[random(0, specialCharacters.length-1)];
+            }
+
+
+        }
+        textBox.innerHTML = newStringSplit
+        count++;
+        if(count >= stringSplit.length+delayAnimation){
+            j++;
+            if(j >= stringSplit.length){ clearInterval(interval); }
+        }
+        
+        }, time);
+    };
+    
+    startScrambleText();
+    }
+  </script>
   <style>
   	#logo {
   		height: 50px;
@@ -71,12 +115,31 @@
 		padding: 10px;
 	}
 
+    body{
+    }
+
+    .text_box{
+    overflow: hidden;
+    font-family: monospace, sans-serif;
+    /* font-size: 4rem; */
+	font-size: 3.5vw;
+    white-space: nowrap;
+    color: black;
+    animation: typing 2s steps(4) infinite;
+    text-align: center;
+
+    }
+
+    @keyframes typing {
+    }
+
   </style>
 </head>
 <body>
 	<div id="logo">
 		<img src="images/logo.svg"/>
 	</div>
+	<div class="text_box">Let Our Tools Decide For You:</div>
 	<div id="container_outer">
 		<div id="container_inner">
 			<div id="imagecontainer">
