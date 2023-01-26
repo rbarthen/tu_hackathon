@@ -1,0 +1,519 @@
+<script language="JavaScript">
+var rolls = 0;
+var basicComplete=false;
+var kismetComplete=false;
+var diceRolling = 0;
+
+var historyState = new Array();;
+
+function undo(){
+	if(historyState.length >0){
+		var lastDice = historyState[historyState.length-1][1].split(",");
+		rolls = historyState[historyState.length-1][2];
+		if(rolls == 3){
+			document.kismet.rollButton.disabled=true;
+		}			
+		var lastItem = item(historyState[historyState.length-1][0]);
+		lastItem.innerHTML = "&nbsp;";
+		lastItem.className="openItem";
+		for(var i=0; i< lastDice.length;i++){
+			setDie(i+1,lastDice[i])
+		}
+		//alert(historyState);
+		historyState.splice(historyState.length-1,1);
+		//alert(historyState);
+		checkOptions();
+		/*if(historyState.length == 0){
+			item("undoButton").disabled = true;
+			resetDice();
+		}*/
+	}
+	else{
+		item("undoButton").disabled = true;
+		resetDice();
+		rolls=0;
+		checkOptions();
+	}
+}
+
+function resetDice(){
+	rolls=0;
+	for(var i=1; i<6; i++){
+		item("Die"+i).value=0;//.innerHTML = "&nbsp;";
+		item("Die"+i).className = "";
+		document.kismet.Die[i-1].checked=false;
+	}	
+	checkOptions();
+}
+
+function setItem(e){
+	if(rolls==0) return false;
+	var srcItem = e.target || e.srcElement;
+	if(!srcItem.id || srcItem.className=="used" || srcItem.id.match(/(basic)|(kismet)/i)) return;
+	if(srcItem.className == "openItem"){
+		if(isNaN(srcItem.innerHTML))	srcItem.innerHTML = 0;
+		srcItem.className = "used";
+	}
+	var diceState = sortedDice();
+	for(var i=1; i<6; i++){
+		item("Die"+i).value = 0;//innerHTML = "&nbsp;";		
+		item("Die"+i).className = "";
+		document.kismet.Die[i-1].checked=false;
+	}
+	checkOptions();
+	if(basicComplete && kismetComplete){
+	 document.kismet.Die.disabled=true;
+	 return;			
+	}
+	//save historyState
+	var curState = new Array();
+	curState[0] = srcItem.id;
+	curState[1] = diceState;
+	curState[2] = rolls;	
+	historyState[historyState.length] = curState;
+	item("undoButton").disabled = false;
+	rolls=0;
+	document.kismet.rollButton.disabled=false;	
+}
+
+function item(id){
+	return document.getElementById(id);
+}
+
+function basicItem(id,val){
+	curItem = item(id);
+	if(curItem.className == "used"){
+		return parseInt(curItem.innerHTML);		
+	}else{
+		basicComplete = false;
+		curTotal = 0;		
+		for(var i=1; i<6; i++){
+			if(item("Die"+i).value == val){//innerHTML == val){
+				curTotal+= val;
+			}			
+		}
+		if(curTotal > 0)
+			curItem.innerHTML = curTotal;
+		else
+			curItem.innerHTML = "&nbsp;";
+		return 0;	
+	}
+}
+
+function checkOptions(){
+	if(diceRolling > 0){
+		window.setTimeout("checkOptions()", 20);
+		return;
+	}
+	basicComplete = true;
+	kismetComplete = true;
+	var basicTotal = 0;
+	var kismetTotal = 0;	
+	basicTotal += basicItem("Aces",1);
+	basicTotal += basicItem("Deuces",2);
+	basicTotal += basicItem("Treys",3);
+	basicTotal += basicItem("Fours",4);
+	basicTotal += basicItem("Fives",5);
+	basicTotal += basicItem("Sixes",6);
+	item("basicSubTotal").innerHTML = basicTotal;
+	var basicBonus = 0;
+	if(basicTotal >= 63 && basicTotal <=70)
+		basicBonus = 35;
+	if(basicTotal >= 71 && basicTotal <=77)
+		basicBonus = 55;
+	if(basicTotal >= 78)
+		basicBonus = 75;
+	item("basicBonus").innerHTML=basicBonus;
+	var basicGrandTotal = basicTotal + basicBonus;
+	item("basicTotal").innerHTML = basicGrandTotal; 
+	item("basicSectionTotal").innerHTML = basicGrandTotal; 
+	if(basicComplete){
+		item("basicBonus").className="used";
+		item("basicSubTotal").className="used";
+		item("basicTotal").className="used";
+		item("basicSectionTotal").className="used";
+	}
+	
+	//Kismet section
+	var diceList = sortedDice();
+	var sumDice = eval(diceList.replace(/,/g, "+"));
+	var diceOnly=diceList.replace(/,/g,"")
+	//2 pair same color
+	curItem = item("2PSC");
+	if(curItem.className == "used"){
+		kismetTotal+=parseInt(curItem.innerHTML);
+	}else{
+		kismetComplete=false;
+		if(diceOnly.match(/1{4}|2{4}|3{4}|4{4}|5{4}|6{4}/) || diceOnly.match(/11[1-6]?66/) || diceOnly.match(/22[1-6]?55/) || diceOnly.match(/3344/)){
+			curItem.innerHTML=sumDice;
+		}else curItem.innerHTML="&nbsp;";
+	}
+	//3 of a kind
+	curItem = item("3OAK");
+	if(curItem.className == "used"){
+		kismetTotal+=parseInt(curItem.innerHTML);
+	}else{
+		kismetComplete=false;
+		if(diceOnly.match(/1{3}|2{3}|3{3}|4{3}|5{3}|6{3}/)){
+			curItem.innerHTML = sumDice;
+		}else curItem.innerHTML = "&nbsp;"
+	}
+	//straight
+	curItem = item("Straight");
+	if(curItem.className == "used"){
+		kismetTotal+=parseInt(curItem.innerHTML);
+	}else{
+		kismetComplete=false;
+		if(diceOnly.match(/(12345)|(23456)/)){
+			curItem.innerHTML = 30;
+		}else curItem.innerHTML = "&nbsp;";
+	}
+	//flush
+	curItem = item("Flush");
+	if(curItem.className == "used"){
+		kismetTotal+=parseInt(curItem.innerHTML);
+	}else{
+		kismetComplete=false;
+		if(diceOnly.match(/[16]{5}|[25]{5}|[34]{5}/)){
+			curItem.innerHTML = 35;
+		}else curItem.innerHTML = "&nbsp;";
+	}
+	//fullHouse
+	curItem = item("FH");
+	if(curItem.className == "used"){
+		kismetTotal+=parseInt(curItem.innerHTML);
+	}else{
+		kismetComplete=false;
+		if(diceOnly.match(/[1-6]{5}/) && diceOnly.substr(0,1) == diceOnly.substr(1,1) &&  diceOnly.substr(3,1) == diceOnly.substr(4,1) && (diceOnly.substr(1,1) == diceOnly.substr(2,1) || diceOnly.substr(2,1) == diceOnly.substr(3,1)) ){
+			curItem.innerHTML = sumDice + 15;
+		}else curItem.innerHTML = "&nbsp;";
+	}
+	//full House same color
+	curItem = item("FHSC");
+	if(curItem.className == "used"){
+		kismetTotal+=parseInt(curItem.innerHTML);
+	}else{
+		kismetComplete=false;
+		if( diceOnly.substr(0,1) == diceOnly.substr(1,1) &&  diceOnly.substr(3,1) == diceOnly.substr(4,1) && (diceOnly.substr(1,1) == diceOnly.substr(2,1) || diceOnly.substr(2,1) == diceOnly.substr(3,1)) && diceOnly.match(/(^.[16]{3})|(^.[25]{3})|(^.[34]{3})/) ){
+			curItem.innerHTML = sumDice + 20;
+		}else curItem.innerHTML = "&nbsp;";
+	}
+	//4 of a kind
+	curItem = item("4OAK");
+	if(curItem.className == "used"){
+		kismetTotal+=parseInt(curItem.innerHTML);
+	}else{
+		kismetComplete=false;
+		if(diceOnly.match(/1{4}|2{4}|3{4}|4{4}|5{4}|6{4}/) ){
+			curItem.innerHTML=sumDice+25;
+		}else curItem.innerHTML="&nbsp;";
+	}
+	//Yarborough
+	curItem = item("Yarborough");
+	if(curItem.className == "used"){
+		kismetTotal+=parseInt(curItem.innerHTML);
+	}else{
+		kismetComplete=false;
+		if(diceOnly.match(/[1-6]{5}/))
+			curItem.innerHTML=sumDice;
+		else
+			curItem.innerHTML="&nbsp;";
+	}
+	//Kismet
+	curItem = item("5OAK");
+	if(curItem.className == "used"){
+		kismetTotal+=parseInt(curItem.innerHTML);
+	}else{	
+		kismetComplete=false;
+		if(diceOnly.match(/1{5}|2{5}|3{5}|4{5}|5{5}|6{5}/) ){
+			curItem.innerHTML=sumDice+50;
+		}else curItem.innerHTML="&nbsp;";
+	}	
+	item("kismetSubTotal").innerHTML=kismetTotal;
+	item("kismetGrandTotal").innerHTML = basicGrandTotal + kismetTotal;
+	if(kismetComplete && basicComplete){
+		item("kismetSubTotal").className="used";
+		item("kismetGrandTotal").className = "used";
+	}
+}
+
+function sortedDice(){
+	var diceArray = new Array()
+	for(var i=1; i<6; i++){
+		diceArray[diceArray.length] = item("Die"+i).value;//.innerHTML;
+	}
+	diceArray.sort();
+	return diceArray.join(",").replace(/[^0-9,]/g, "0");
+}
+
+
+function getRandomDie(){
+	var randNo = Math.floor(Math.random()*6)+1;
+	if(randNo==7) randNo = 6;
+	return randNo;
+}
+
+function setDie(diePos,val){
+	var dieFld = item("Die" + diePos);	
+	dieFld.value = val; //innerHTML = val;
+	var dieColor = "black";
+	if(val == 2 || val == 5){
+		dieColor = "red";
+	}
+	if(val == 3 || val == 4){
+		dieColor = "blue";
+	}
+	dieFld.style.color=dieColor;
+	dieFld.style.borderColor=dieColor;
+	dieFld.className = "Die" + val;
+}
+
+function rollDie(die, count){
+	var randNo = getRandomDie();
+	setDie(die,randNo);
+	if(count < Math.random()*25){
+		window.setTimeout("rollDie(" + die + "," + eval(count+1) + ")" , 75);
+	}else diceRolling--;
+}
+
+function doRoll(){
+	for(var i=0; i<document.kismet.Die.length; i++){
+		if(!document.kismet.Die[i].checked){
+			diceRolling++;
+			rollDie(i+1, 0);
+		}
+	}
+	rolls++;
+	if(rolls == 3){
+		document.kismet.rollButton.disabled=true;
+	}	
+	checkOptions();
+}
+
+function holdDie(src){
+	if(rolls>0 && rolls<3){
+		var diePos = parseInt(src.id.replace(/[^0-9]/g,""))-1;
+		document.kismet.Die[diePos].checked = !document.kismet.Die[diePos].checked;
+	}
+}
+</script>
+
+<style>
+	.openItem{
+		text-align:right;
+		color:gray;
+		cursor:pointer;
+	}
+	.used{
+		text-align:right;
+		color:blue;
+	}
+	.dice td{
+		/*width:24px;
+		height:30px;*/
+		width:48px;
+		height:60px;
+		background-repeat:none;
+
+		text-align:center;
+		border: none !important;
+		cursor:pointer;
+		/*font-size:0px;*/
+	}
+	td{
+		font-weight: bold;
+		font-size:90%;
+		padding-left:6px;
+		padding-right:6px;
+	}
+	
+	.die1{
+		font-size:0px;
+		background-image:url('kismetDice/Die_1.png');
+	}
+	.die2{
+		font-size:0px;
+		background-image:url('kismetDice/Die_2.png');
+	}
+	.die3{
+		font-size:0px;
+		background-image:url('kismetDice/Die_3.png');
+	}
+	.die4{
+		font-size:0px;
+		background-image:url('kismetDice/Die_4.png');
+	}
+	.die5{
+		font-size:0px;
+		background-image:url('kismetDice/Die_5.png');
+	}
+	.die6{
+		font-size:0px;
+		background-image:url('kismetDice/Die_6.png');
+	}
+</style>
+
+<form action="" name="kismet" id="kismet">
+
+<table>	
+	<tr>		
+		<td align="center">					
+			<table class="Dice">				
+				<tr>					
+					<td id="Die1" style="border:black 1px solid;" onclick="holdDie(this);">&nbsp;</td>					
+					<td id="Die2" style="border:red 1px solid;" onclick="holdDie(this);">&nbsp;</td>					
+					<td id="Die3" style="border:blue 1px solid;" onclick="holdDie(this);">&nbsp;</td>					
+					<td id="Die4" style="border:black 1px solid;" onclick="holdDie(this);">&nbsp;</td>					
+					<td id="Die5" style="border:red 1px solid;" onclick="holdDie(this);">&nbsp;</td>					
+					<td></td>				
+				</tr>				
+				<tr>					
+					<td><input type="checkbox" name="Die" value="1"></td>					
+					<td><input type="checkbox" name="Die" value="2"></td>					
+					<td><input type="checkbox" name="Die" value="3"></td>					
+					<td><input type="checkbox" name="Die" value="4"></td>						
+					<td><input type="checkbox" name="Die" value="5"></td>					
+					<td><input type="button" value="Roll" onclick="doRoll()" name="rollButton"></td>				
+				</tr>			
+			</table>					</td>	</tr>
+	<tr>
+		<td>
+			<table cellpadding="1" cellspacing="0" border="1" onclick="setItem(event);">
+				<tr>
+					<td colspan="4" style="font-size:125%; text-align:center;">BASIC Section</td>
+				</tr>
+				<tr>
+					<td align="right">1.</td>
+					<td>ACES</td>
+					<td>1 for Each Ace</td>
+					<td id="Aces" width="30" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">2.</td>
+					<td>Deuces</td>
+					<td>2 for Each Deuce</td>
+					<td id="Deuces" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">3.</td>
+					<td>Treys</td>
+					<td>3 for Each Trey</td>
+					<td id="Treys" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">4.</td>
+					<td>Fours</td>
+					<td>4 for Each Four</td>
+					<td id="Fours" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">5.</td>
+					<td>Fives</td>
+					<td>5 for Each Five</td>
+					<td id="Fives" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">6.</td>
+					<td>Sixes</td>
+					<td>6 for Each Six</td>
+					<td id="Sixes" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center">TOTAL</td>
+					<td class="openItem" id="basicSubTotal">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center" style="background-color:black; color:white;">BONUS</td>
+					<td style="font-size:70%; font-weight:normal;">
+						63-70 Score 35<br>
+						71-77 Score 55<br>
+						78 over Score 75		
+					</td>
+					<td class="openItem" id="basicBonus">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center">*BASIC Section Total</td>
+					<td class="openItem" id="basicTotal">&nbsp;</td>
+				</tr>
+				
+				<tr>
+					<td colspan="4" style="font-size:125%; text-align:center;">KISMET Section</td>
+				</tr>
+				
+				<tr>
+					<td align="right">7.</td>
+					<td>2 Pair Same Color</td>
+					<td align="center">Total All Dice</td>
+					<td id="2PSC" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">8.</td>
+					<td>3 of a Kind</td>
+					<td align="center">Total All Dice</td>
+					<td id="3OAK" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">9.</td>
+					<td><span>Straight</span> <span style="font-size:55%;">1,2,3,4,5 or 2,3,4,5,6</span></td>
+					<td align="center">30</td>
+					<td id="Straight" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">10.</td>
+					<td>Flush <span style="font-size:70%">(All Same Color)</span></td>
+					<td align="center">35</td>
+					<td id="Flush" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">11.</td>
+					<td>Full House</td>
+					<td align="center"><span style="font-size:65%">Total All Dice</span><br>
+					Plus 15</td>
+					<td id="FH" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">12.</td>
+					<td>Full House <span style="font-size:65%">Same Color</span></td>
+					<td align="center"><span style="font-size:70%">Total All Dice</span><br>
+					Plus 20</td>
+					<td id="FHSC" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">13.</td>
+					<td>4 of a Kind</td>
+					<td align="center"><span style="font-size:65%">Total All Dice</span><br>
+					Plus 25</td>
+					<td id="4OAK" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">14.</td>
+					<td>Yarborough</td>
+					<td align="center">Total All Dice</td>
+					<td id="Yarborough" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="right">15.</td>
+					<td>Kismet <span style="font-size:65%">(5 of a Kind)</span></td>
+					<td align="center"><span style="font-size:65%">Total All Dice</span><br>
+					Plus 50</td>
+					<td id="5OAK" class="openItem">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center">KISMET Section Total</td>
+					<td class="openItem" id="kismetSubTotal">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center">*BASIC Section Total</td>
+					<td class="openItem" id="basicSectionTotal">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center">Game Total</td>
+					<td class="openItem" id="kismetGrandTotal">&nbsp;</td>
+				</tr>
+			</table>
+			<div style="text-align:center;margin-top:10px;"><input type="button" name="UNDO" value="Undo" id="undoButton" onclick="undo();" disabled="true"/> <input type="button" name="Reset" value="Reset" onclick="window.location.reload();"/></div>
+		</td>
+
+	</tr>
+</table>
+</form>
