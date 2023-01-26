@@ -78,6 +78,7 @@
         } else {
           let customAnswers = customResponses.value.split("\n")
           answers = Array.from(new Set([...customAnswers, ...default_answers]))
+          answers = answers.filter(x => x.trim() != '' || x.trim() != ' ')
           answer.innerText = "";
           var num = Math.floor(Math.random() * Math.floor(answers.length));
           eightball.classList.add('shake');
