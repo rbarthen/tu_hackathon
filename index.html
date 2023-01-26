@@ -1,0 +1,76 @@
+<html>
+ <head>
+  <title>Home</title>
+  <style>
+       .logo{
+           width:200px;
+        }
+
+        .header1{
+            font-size: 24px;
+            font-weight: bold;
+            padding-top:24px;
+            padding-bottom:10px
+        }
+
+        /* button */
+        .button {
+            background-color: #38a7cc;
+            border: 0;
+            border-radius: 56px;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            font-family: system-ui,-apple-system,system-ui,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            outline: 0;
+            padding: 16px 21px;
+            position: relative;
+            text-align: center;
+            text-decoration: none;
+            transition: all .3s;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .button:before {
+            background-color: initial;
+            background-image: linear-gradient(#fff 0, rgba(255, 255, 255, 0) 100%);
+            border-radius: 125px;
+            content: "";
+            height: 50%;
+            left: 4%;
+            opacity: .5;
+            position: absolute;
+            top: 0;
+            transition: all .3s;
+            width: 92%;
+        }
+
+        .button:hover {
+            box-shadow: rgba(255, 255, 255, .2) 0 3px 15px inset, rgba(0, 0, 0, .1) 0 3px 5px, rgba(0, 0, 0, .1) 0 10px 13px;
+            transform: scale(1.05);
+        }
+
+        @media (min-width: 768px) {
+            .button {
+                padding: 16px 48px;
+            }
+        }
+  </style>
+</head>
+<body>
+    <div>
+        <img src="images/logo.svg" alt="Credit Scores, Credit Reports &amp; Credit Check" class=" logo">
+       </div><br/><br/>
+       <div class="header1">When you want to leave your decisions to chance, use one of our tools to decide for you:</div>
+       <ul>
+        <li><a href="randomizer.html">Randomizer/Icebreaker</a></li>
+        <li><a href="Magic8/magic8.html">Magic 8 Ball</a></li>
+        <li><a href="roll_dice.html">Roll the Dice</a></li>
+        <li><a href="kismet.html">Bonus Game</a></li>
+       </ul>
+    </body>
+    </html>
