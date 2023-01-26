@@ -82,7 +82,6 @@
           answers = answers.filter(x => {
             return !x.trim() == '' || !x.trim() == ' '
           })
-          console.log('fff', answers)
           answer.innerText = "";
           var num = Math.floor(Math.random() * Math.floor(answers.length));
           eightball.classList.add('shake');
