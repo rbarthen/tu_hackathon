@@ -318,6 +318,12 @@
 
     function load_icebreaker_category(src){
       let val = src.value;
+      if(val == null || val == ""){
+        question_list = [];
+        load_list(question_list, "loaded_list");
+        item("icebreaker_buttons").className = "hidden";
+        return;
+      }
       question_list = icebreakers[val];
       load_list(question_list, "loaded_list");
       item("icebreaker_buttons").className = "";
@@ -474,12 +480,12 @@ Christina</textarea>
 </div>
 
 <hr/>
-<div class="header1">Load Icebreaker questions by category:</div>
-<div>
-<select id="icebreaker_categories" onchange="load_icebreaker_category(this)">
-  <option value="" selected="true"> -- choose an icebreaker category --</option>
-</select>
-</div><br/>
+<div class="header1">Load Icebreaker questions by category:
+  <select id="icebreaker_categories" onchange="load_icebreaker_category(this)">
+    <option value="" selected="true"> -- choose an icebreaker category --</option>
+  </select>
+</div>
+<br/>
 
 
 <div id="icebreaker_buttons" class="hidden">
