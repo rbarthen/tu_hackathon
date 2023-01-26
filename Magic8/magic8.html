@@ -39,6 +39,28 @@
        var question = document.getElementById("question");
        var customResponses = document.getElementById("custom_responses");
        var onlyCustom = false;
+       var defaultResponses = document.getElementById("default_responses")
+       var footElementTargetMap = {
+        'footer-item-1': 'custom_responses',
+        'footer-item-2': 'default_responses'
+       }
+       var stringToBoolMap = {
+        'custom_responses': false,
+        'default_responses': false
+       }
+
+      Object.keys(footElementTargetMap).forEach(x =>  {
+        let a = document.getElementById(x)
+        a.addEventListener("click", async function() {
+          stringToBoolMap[footElementTargetMap[x]] = !stringToBoolMap[footElementTargetMap[x]]
+          const targetElement = document.getElementById(footElementTargetMap[x])
+          targetElement.style['visibility'] = stringToBoolMap[footElementTargetMap[x]] ? 'visible' : 'hidden'
+        })
+      })
+
+       for (i in default_answers) {
+        defaultResponses.value = defaultResponses.value + default_answers[i] + (i < default_answers.length-1 ? '\n' : '')
+       }
        
        answerClass.addEventListener("click", async function() {
         eightball.click()
@@ -117,12 +139,22 @@
       width:100%;
       height: 150px;
       padding:10px;
-      margin-left: auto;
+      margin-left: 30px;
       margin-right: auto;
-      width: 50%;
       font-size:15px;
+      visibility: hidden;
     }
-
+    #default_responses {
+      display: block;
+      width:100%;
+      height: 150px;
+      padding:10px;
+      margin-left: auto;
+      margin-right: 30px;
+      width: 300px;
+      font-size:15px;
+      visibility: hidden;
+    }
     #eight-ball {
       width: 100%;
       display: flex;
@@ -378,11 +410,10 @@
 
     .footer {
       display: flex;
-      /* width: 100%; */
       align-items: center;
       justify-content: space-between;
-      padding-right: 10%;
-      padding-left: 10%;
+      padding-right: 5%;
+      padding-left: 5%;
     }
     .inner-footer {
       display: flex;
@@ -449,19 +480,17 @@
         </div>
       </div>
       <div>
-        <textarea id="custom_responses">Yes
-No
-Maybe</textarea><br/><br/>
+        <textarea id="custom_responses">You know it!
+No clue
+Surprisingly, yes</textarea><br/><br/>
       </div>
     </div>
     <div class="inner-footer">
       
       <div>
-        <textarea id="custom_responses">Yes
-No
-Maybe</textarea><br/><br/>
+        <textarea id="default_responses"></textarea><br/><br/>
       </div>
-      <div class="stage" id="footer-item-1">
+      <div class="stage" id="footer-item-2">
         <div class="scene">
           <div class="ufo">
             <div class="alien-window">
